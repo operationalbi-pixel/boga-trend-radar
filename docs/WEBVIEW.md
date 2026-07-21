@@ -1,71 +1,38 @@
-# WebView Implementation
+# WebView Notes
 
-## URL
+Gunakan URL GitHub Pages sebagai URL WebView.
 
-Gunakan URL GitHub Pages, contoh:
+## Android
 
-```text
-https://USERNAME.github.io/boga-trend-radar/
-```
+Aktifkan:
 
-Jangan gunakan URL file mentah `raw.githubusercontent.com` karena content type, relative asset, service worker, dan navigasinya tidak sesuai untuk aplikasi web.
+- JavaScript.
+- DOM storage.
+- Network access HTTPS.
+- Back navigation menggunakan `webView.canGoBack()`.
+- File chooser bila fitur Bulk CSV Import akan dipakai di aplikasi.
 
-## Android WebView — Kotlin
-
-Konfigurasi penting:
+Contoh konfigurasi dasar:
 
 ```kotlin
 webView.settings.javaScriptEnabled = true
 webView.settings.domStorageEnabled = true
-webView.settings.databaseEnabled = true
-webView.settings.allowFileAccess = false
-webView.settings.allowContentAccess = false
-webView.settings.setSupportZoom(false)
-webView.webViewClient = WebViewClient()
-webView.webChromeClient = WebChromeClient()
-webView.loadUrl("https://USERNAME.github.io/boga-trend-radar/")
+webView.loadUrl("https://USERNAME.github.io/NAMA-REPOSITORY/")
 ```
 
-Internet permission:
+Untuk upload CSV, implementasikan `WebChromeClient.onShowFileChooser`.
 
-```xml
-<uses-permission android:name="android.permission.INTERNET" />
-```
+## iOS
 
-Back navigation:
+Gunakan `WKWebView` dan load URL GitHub Pages. Seluruh koneksi Worker menggunakan HTTPS sehingga biasanya tidak membutuhkan App Transport Security exception.
 
-```kotlin
-onBackPressedDispatcher.addCallback(this) {
-    if (webView.canGoBack()) webView.goBack() else finish()
-}
-```
+## Session
 
-File upload untuk CSV/JSON membutuhkan implementasi `WebChromeClient.onShowFileChooser`. Tanpa handler tersebut, tombol import file dapat tidak membuka picker pada beberapa Android WebView.
+Database tersimpan di Cloudflare D1. Admin token hanya berada pada `sessionStorage` WebView dan hilang ketika session ditutup/dibersihkan.
 
-## iOS WKWebView — Swift
+## Recommended behavior
 
-```swift
-let config = WKWebViewConfiguration()
-config.websiteDataStore = .default()
-let webView = WKWebView(frame: .zero, configuration: config)
-let url = URL(string: "https://USERNAME.github.io/boga-trend-radar/")!
-webView.load(URLRequest(url: url))
-```
-
-WKWebView memerlukan persistent website data agar localStorage tersimpan.
-
-## Cache dan update
-
-Aplikasi memakai service worker. Saat mengganti file dan pengguna masih melihat versi lama:
-
-1. Naikkan `CACHE_NAME` di `service-worker.js`.
-2. Commit dan deploy ulang.
-3. Tutup dan buka ulang WebView.
-4. Bila perlu, clear website data/cache pada aplikasi native.
-
-## Security
-
-- Batasi WebView hanya membuka domain GitHub Pages dan domain Apps Script yang diperlukan.
-- Buka evidence URL eksternal melalui external browser, bukan selalu di dalam WebView.
-- Jangan aktifkan arbitrary file access.
-- Jangan menyimpan Google API secret di JavaScript atau aplikasi APK/IPA.
+- Tampilkan loading screen sampai `didFinish`/`onPageFinished`.
+- Sediakan pull-to-refresh.
+- Buka evidence TikTok, Instagram, YouTube, atau news di external browser bila aplikasinya tersedia.
+- Izinkan download CSV template dan upload file CSV.

@@ -1,148 +1,141 @@
-# BOGA Trend Radar — GitHub Pages / WebView Edition
+# BOGA Food Trend Radar — Free Hybrid Edition
 
-Static food-trend intelligence dashboard yang bisa langsung di-host di GitHub Pages dan dibuka melalui Android/iOS WebView.
+Aplikasi untuk menangkap **food trend aktual dan near real-time** dengan biaya awal gratis:
 
-## Yang sudah tersedia
+- Google Trends RSS: otomatis setiap jam.
+- YouTube Data API: otomatis setiap 3 jam.
+- TikTok Creative Center: input manual terverifikasi.
+- Instagram Reels/Explore: input manual terverifikasi.
+- Cloudflare Worker: API, scheduler, collector, dan scoring.
+- Cloudflare D1: histori snapshot untuk menghitung growth.
+- GitHub Pages: dashboard/WebView.
 
-- Viral Potential Score 0–100.
-- Bakerzin Commercial Fit Score 0–100.
-- Saturation Score dan 7-day growth.
-- Keputusan otomatis: Fast Test, Differentiate Fast, Adapt Concept, Lab Test, Monitor, Ignore.
-- CRUD trend dan observation/evidence.
-- Product Test Board dan status workflow.
-- Sales validation per outlet.
-- Opportunity map.
-- Filter category, action, dan search.
-- Import Google Trends CSV.
-- Export/import backup JSON.
-- Export ranking trend ke CSV.
-- Keyword watchlist.
-- Responsive mobile WebView.
-- PWA/offline cache.
-- Local mode tanpa backend.
-- Optional shared mode melalui Google Apps Script + Google Sheets.
-- Optional YouTube collector dengan API key tersimpan di Apps Script.
-- Optional BigQuery sales sync melalui Apps Script.
+Aplikasi ini **tidak menggunakan data contoh**. Dashboard akan kosong sampai collector pertama atau social signal pertama berhasil masuk.
 
-## Struktur repository
+## Flow
+
+```text
+Google Trends RSS ── otomatis ─┐
+YouTube Data API ─── otomatis ─┤
+TikTok Creative Center ─ manual ├─> Cloudflare Worker ─> D1 History
+Instagram Reels ─────── manual ┘          │
+                                           ├─> Momentum & Viral Score
+                                           └─> GitHub Pages Dashboard
+```
+
+## Fitur
+
+- Automatic food-topic discovery dari YouTube.
+- Google Trending Now food filtering.
+- Watchlist keyword untuk YouTube.
+- TikTok dan Instagram Social Inbox.
+- Single input dan bulk CSV import.
+- Label data: `LIVE API / RSS` atau `MANUAL VERIFIED`.
+- Views, likes, comments, shares, creator count, post count, views/hour.
+- Viral Score, Momentum, Growth, Saturation, Confidence.
+- Lifecycle: Early Signal, Emerging, Growing, Viral, Saturated, Declining, Monitor.
+- Evidence URL dan score history.
+- Mobile responsive, PWA, dan WebView ready.
+
+## Struktur file
 
 ```text
 .
-├── index.html
-├── 404.html
-├── config.js
-├── manifest.webmanifest
-├── service-worker.js
-├── .nojekyll
-├── assets/
-│   ├── app.js
-│   ├── styles.css
-│   └── icon.svg
-├── data/
-│   ├── seed.json
-│   └── google_trends_sample.csv
-├── apps-script/
-│   ├── Code.gs
-│   ├── appsscript.json
-│   └── README.md
-├── docs/
-│   ├── IMPLEMENTATION.md
-│   └── WEBVIEW.md
-├── examples/
-│   └── bigquery_sales_query.sql
-└── .github/workflows/pages.yml
+├── site/                         # dashboard GitHub Pages
+│   ├── index.html
+│   ├── config.js
+│   ├── service-worker.js
+│   ├── manifest.webmanifest
+│   ├── .nojekyll
+│   ├── assets/
+│   └── templates/social-signals-template.csv
+├── worker/                       # Cloudflare API + D1 + scheduler
+│   ├── src/
+│   ├── migrations/
+│   ├── test/
+│   ├── wrangler.jsonc
+│   └── package.json
+├── .github/workflows/
+│   ├── pages.yml
+│   └── worker.yml
+├── QUICK_START.md
+├── SETUP_CHECKLIST.md
+└── docs/
 ```
 
-## Deploy paling cepat ke GitHub Pages
+## Implementasi tercepat
 
-1. Buat repository baru, misalnya `boga-trend-radar`.
-2. Upload seluruh isi folder ini ke root repository.
-3. Pastikan default branch bernama `main`.
-4. Buka **Settings → Pages**.
-5. Pada **Build and deployment → Source**, pilih **GitHub Actions**.
-6. Push/commit ke branch `main`.
-7. Workflow `Deploy static site to GitHub Pages` akan mempublikasikan situs.
+Ikuti [QUICK_START.md](QUICK_START.md). Untuk checklist satu per satu, buka [SETUP_CHECKLIST.md](SETUP_CHECKLIST.md).
 
-URL umumnya:
-
-```text
-https://USERNAME.github.io/boga-trend-radar/
-```
-
-Semua link asset menggunakan relative path, sehingga aplikasi tetap berjalan di project path GitHub Pages.
-
-## Mode 1 — Local, langsung berfungsi
-
-Konfigurasi bawaan di `config.js`:
-
-```js
-window.BOGA_CONFIG = {
-  storageMode: "local",
-  apiUrl: "",
-  apiToken: ""
-};
-```
-
-Data disimpan di `localStorage` perangkat/browser. Mode ini cocok untuk:
-
-- Demo.
-- Pilot satu perangkat.
-- WebView pribadi.
-- Pengujian UI dan scoring.
-
-Gunakan menu **Settings & Backup** untuk memindahkan data antarperangkat.
-
-## Mode 2 — Shared data dengan Apps Script
-
-Ikuti `apps-script/README.md`, lalu ubah `config.js`:
-
-```js
-window.BOGA_CONFIG = {
-  storageMode: "apps-script",
-  apiUrl: "https://script.google.com/macros/s/DEPLOYMENT_ID/exec",
-  apiToken: "TOKEN_INTERNAL_YANG_SAMA",
-  autoSync: true
-};
-```
-
-Mode ini menyimpan data bersama di Google Sheets dan memungkinkan YouTube collector tanpa membuka API key di GitHub.
-
-## Menjalankan lokal
-
-Karena aplikasi memakai service worker dan fetch seed JSON, jalankan melalui HTTP server, bukan klik langsung `index.html`.
-
-Python:
+Ringkasan:
 
 ```bash
-python -m http.server 8080
+cd worker
+npm install
+npx wrangler login
+npx wrangler d1 create boga-food-trend-radar
 ```
 
-Lalu buka:
+Masukkan `database_id` ke `worker/wrangler.jsonc`, kemudian:
 
-```text
-http://localhost:8080
+```bash
+npx wrangler d1 migrations apply DB --remote
+npx wrangler secret put YOUTUBE_API_KEY
+npx wrangler secret put ADMIN_TOKEN
+npx wrangler deploy
 ```
 
-## Google Trends CSV
+Salin URL Worker ke `site/config.js`, upload seluruh repository ke GitHub, lalu pilih **Settings → Pages → Source: GitHub Actions**.
 
-Format wajib:
+## Data TikTok gratis
 
-```csv
-keyword,search_interest,date
-Pistachio Strawberry Cup,92,2026-07-21
-Pistachio Strawberry Cup,71,2026-07-14
-```
+1. Buka TikTok Creative Center.
+2. Masuk ke Trends/Hashtags dan pilih region Indonesia.
+3. Pilih trend yang relevan dengan makanan.
+4. Masukkan trend name, views, posts, creators, engagement, dan link evidence ke tab **Social Inbox**.
+5. Ulangi snapshot terhadap trend yang sama setelah beberapa jam atau hari agar growth dapat dihitung.
 
-Contoh ada di `data/google_trends_sample.csv`.
+## Data Instagram gratis
+
+1. Temukan food trend dari Reels, Explore, creator, atau kompetitor.
+2. Salin URL post/Reels dan metrik yang tersedia.
+3. Masukkan melalui Social Inbox.
+4. Ulangi dengan nama trend yang sama untuk membuat histori pertumbuhan.
+
+## Kenapa TikTok/Instagram manual?
+
+Versi gratis menghindari scraping dan tidak mengklaim akses API discovery yang tidak tersedia. Data tetap aktual karena angka dimasukkan dari sumber platform dan diberi label **Manual Verified**.
+
+## Update frequency
+
+| Source | Mode | Frequency |
+|---|---|---|
+| Google Trends | Automatic | Setiap jam |
+| YouTube | Automatic | Setiap 3 jam |
+| TikTok | Manual verified | Disarankan 1–2 kali sehari |
+| Instagram | Manual verified | Saat ditemukan signal baru |
+| Dashboard | Automatic refresh | Setiap 5 menit |
 
 ## Keamanan
 
-- Jangan memasukkan YouTube API key, service-account JSON, BigQuery credential, atau password ke repository.
-- GitHub Pages adalah static hosting; seluruh file repository publik dapat dilihat pengguna.
-- Simpan secret di Google Apps Script Script Properties.
-- Gunakan repository private bila akun/organisasi mendukung kebutuhan Pages private yang sesuai.
-- `API_TOKEN` di browser bukan autentikasi tingkat tinggi karena nilainya ada di `config.js`. Token ini hanya menjadi pembatas ringan. Untuk data sensitif, gunakan backend dengan login/identity provider.
+- Jangan menaruh `YOUTUBE_API_KEY` atau `ADMIN_TOKEN` dalam GitHub.
+- Secret disimpan memakai `wrangler secret put`.
+- `site/config.js` hanya berisi URL publik Worker.
+- Admin token disimpan sementara di `sessionStorage` browser, bukan permanen.
+- Gunakan token acak minimal 32 karakter.
 
-## WebView
+## Pengujian
 
-Panduan Android/iOS, konfigurasi JavaScript, DOM storage, file chooser, dan back navigation tersedia di `docs/WEBVIEW.md`.
+```bash
+node scripts/validate.mjs
+cd worker
+npm test
+```
+
+## Dokumentasi lanjutan
+
+- [Metodologi scoring](docs/METHODOLOGY.md)
+- [API Reference](docs/API.md)
+- [TikTok & Instagram workflow](docs/SOCIAL_SIGNALS.md)
+- [Troubleshooting](docs/TROUBLESHOOTING.md)
+- [WebView](docs/WEBVIEW.md)

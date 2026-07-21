@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Redirecting — BOGA Food Trend Radar</title>
+  <style>body{font-family:system-ui,sans-serif;display:grid;place-items:center;min-height:100vh;margin:0;background:#f4f6f8;color:#111827}p{color:#64748b}</style>
+</head>
+<body>
+  <div><strong>BOGA Food Trend Radar</strong><p>Mengalihkan ke dashboard…</p></div>
+  <script>
+    const parts = location.pathname.split('/').filter(Boolean);
+    const base = location.hostname.endsWith('github.io') && parts.length ? `/${parts[0]}/` : '/';
+    location.replace(`${location.origin}${base}`);
+  </script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <meta name="description" content="Food trend intelligence dashboard untuk menangkap early signals sebelum viral.">
+  <title>BOGA Food Trend Radar</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./assets/styles.css">
+  <script src="./config.js"></script>
+  <script type="module" src="./assets/app.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-wrap">
+        <img src="./assets/icon.svg" class="brand-icon" alt="">
+        <div>
+          <div class="brand-name">BOGA FOOD TREND RADAR</div>
+          <div class="brand-tagline">Catch early signals before they go viral</div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <div id="liveStatus" class="status-pill status-loading">
+          <span class="status-dot"></span><span>Connecting</span>
+        </div>
+        <button id="refreshButton" class="button button-secondary" type="button">Refresh</button>
+        <button id="adminButton" class="button button-primary" type="button">Collector</button>
+      </div>
+    </header>
+
+    <nav class="tabbar" aria-label="Navigasi utama">
+      <button class="tab-button active" data-tab="dashboard">Dashboard</button>
+      <button class="tab-button" data-tab="trends">All Trends</button>
+      <button class="tab-button" data-tab="social">Social Inbox</button>
+      <button class="tab-button" data-tab="sources">Data Sources</button>
+      <button class="tab-button" data-tab="methodology">Methodology</button>
+    </nav>
+
+    <main>
+      <section id="setupBanner" class="setup-banner hidden">
+        <strong>API belum dikonfigurasi.</strong>
+        <span>Edit <code>site/config.js</code> dan isi URL Cloudflare Worker agar data aktual tampil.</span>
+      </section>
+
+      <section id="dashboardTab" class="tab-panel active">
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">LIVE FOOD INTELLIGENCE</p>
+            <h1>What is rising right now?</h1>
+            <p id="freshnessText" class="muted">Memuat data terbaru…</p>
+          </div>
+          <div class="heading-note"><span>Region</span><strong>Indonesia</strong></div>
+        </div>
+        <div id="kpiGrid" class="kpi-grid skeleton-grid"></div>
+
+        <div class="section-heading">
+          <div><h2>Early Signals</h2><p>Momentum tinggi sebelum volume menjadi besar.</p></div>
+          <button class="text-button" data-open-tab="trends" data-lifecycle="early_signal,emerging">Lihat semua</button>
+        </div>
+        <div id="earlySignals" class="trend-card-grid"></div>
+
+        <div class="section-heading">
+          <div><h2>Viral & Growing</h2><p>Tren dengan reach, engagement, dan creator spread terkuat.</p></div>
+          <button class="text-button" data-open-tab="trends">Lihat ranking</button>
+        </div>
+        <div id="viralGrowing" class="trend-card-grid"></div>
+
+        <div class="two-column">
+          <article class="panel">
+            <div class="panel-heading"><div><h3>Fastest Momentum</h3><p>Diurutkan dari momentum score.</p></div></div>
+            <div id="momentumList" class="compact-list"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-heading"><div><h3>Category Pulse</h3><p>Distribusi tren aktif per kategori.</p></div></div>
+            <div id="categoryPulse" class="category-bars"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="trendsTab" class="tab-panel">
+        <div class="page-heading compact-heading"><div><p class="eyebrow">TREND EXPLORER</p><h1>All Food Trends</h1></div></div>
+        <div class="filter-bar">
+          <label class="search-box"><span>Search</span><input id="searchInput" type="search" placeholder="Pistachio, matcha, croissant…"></label>
+          <label><span>Lifecycle</span><select id="lifecycleFilter">
+            <option value="">All lifecycle</option><option value="early_signal">Early Signal</option><option value="emerging">Emerging</option>
+            <option value="growing">Growing</option><option value="viral">Viral</option><option value="saturated">Saturated</option>
+            <option value="declining">Declining</option><option value="monitor">Monitor</option>
+          </select></label>
+          <label><span>Category</span><select id="categoryFilter"><option value="">All categories</option></select></label>
+          <label><span>Source</span><select id="sourceFilter">
+            <option value="">All sources</option><option value="youtube">YouTube</option><option value="google_trends">Google Trends</option>
+            <option value="news">News</option><option value="tiktok">TikTok Manual</option><option value="instagram">Instagram Manual</option>
+          </select></label>
+          <label><span>Sort</span><select id="sortFilter">
+            <option value="score">Viral score</option><option value="momentum">Momentum</option><option value="growth">Growth</option>
+            <option value="newest">First detected</option><option value="updated">Last updated</option>
+          </select></label>
+        </div>
+        <div class="table-panel">
+          <div class="table-scroll"><table><thead><tr>
+            <th>Trend</th><th>Lifecycle</th><th>Viral</th><th>Momentum</th><th>Growth</th><th>Reach</th><th>Sources</th><th>Updated</th>
+          </tr></thead><tbody id="trendsTableBody"></tbody></table></div>
+          <div id="tableEmpty" class="empty-state hidden">Belum ada trend yang cocok dengan filter.</div>
+        </div>
+      </section>
+
+      <section id="socialTab" class="tab-panel">
+        <div class="page-heading compact-heading">
+          <div><p class="eyebrow">FREE SOCIAL SIGNAL INPUT</p><h1>TikTok & Instagram Inbox</h1>
+            <p class="muted">Masukkan metrik aktual dari TikTok Creative Center atau Instagram. Semua signal diberi label Manual Verified.</p></div>
+        </div>
+        <div class="social-layout">
+          <article class="panel social-form-panel">
+            <div class="panel-heading"><div><h3>Add social signal</h3><p>Gunakan angka yang terlihat saat pengambilan data.</p></div></div>
+            <div class="manual-grid social-form-grid">
+              <label class="wide"><span>Admin token</span><input id="socialAdminToken" type="password" autocomplete="off" placeholder="ADMIN_TOKEN Cloudflare"></label>
+              <label><span>Platform</span><select id="socialSource"><option value="tiktok">TikTok</option><option value="instagram">Instagram</option></select></label>
+              <label><span>Region</span><input id="socialRegion" value="ID" maxlength="5"></label>
+              <label class="wide"><span>Trend name</span><input id="socialTrendName" type="text" placeholder="contoh: Strawberry Pistachio Cup"></label>
+              <label><span>Category</span><select id="socialCategory">
+                <option value="">Auto detect</option><option>Dessert</option><option>Pastry</option><option>Cake</option><option>Beverage</option>
+                <option>Cookie</option><option>Bread</option><option>Snack</option><option>MainCourse</option><option>Ingredient</option><option>Other</option>
+              </select></label>
+              <label><span>Creator/account</span><input id="socialCreator" type="text" placeholder="@creator"></label>
+              <label><span>Views</span><input id="socialViews" type="number" min="0"></label>
+              <label><span>Likes</span><input id="socialLikes" type="number" min="0"></label>
+              <label><span>Comments</span><input id="socialComments" type="number" min="0"></label>
+              <label><span>Shares</span><input id="socialShares" type="number" min="0"></label>
+              <label><span>Posts/videos found</span><input id="socialPosts" type="number" min="1" value="1"></label>
+              <label><span>Unique creators</span><input id="socialCreators" type="number" min="0"></label>
+              <label><span>Content published at</span><input id="socialPublishedAt" type="datetime-local"></label>
+              <label><span>Data captured at</span><input id="socialCollectedAt" type="datetime-local"></label>
+              <label class="wide"><span>Evidence URL</span><input id="socialUrl" type="url" placeholder="https://www.tiktok.com/... atau https://www.instagram.com/..."></label>
+              <label class="wide"><span>Notes</span><textarea id="socialNote" rows="3" placeholder="Hashtag, related terms, atau konteks Creative Center"></textarea></label>
+            </div>
+            <div class="form-actions"><button id="saveSocialSignal" class="button button-primary" type="button">Save verified signal</button></div>
+            <p id="socialMessage" class="admin-message"></p>
+          </article>
+
+          <article class="panel import-panel">
+            <div class="panel-heading"><div><h3>Bulk CSV import</h3><p>Gunakan template untuk beberapa signal sekaligus.</p></div></div>
+            <a class="button button-secondary full-button" href="./templates/social-signals-template.csv" download>Download CSV template</a>
+            <label class="file-drop"><span>Select CSV</span><input id="socialCsvFile" type="file" accept=".csv,text/csv"></label>
+            <button id="importSocialCsv" class="button button-primary full-button" type="button">Import CSV</button>
+            <div class="mini-guide">
+              <strong>Input TikTok gratis</strong><span>Buka TikTok Creative Center → Trends/Hashtags → pilih Indonesia → salin metrik dan evidence.</span>
+              <strong>Input Instagram gratis</strong><span>Buka Reels/Explore atau akun food creator → salin link serta metrik yang tersedia.</span>
+            </div>
+          </article>
+        </div>
+
+        <div class="section-heading"><div><h2>Recent Manual Signals</h2><p>Riwayat TikTok dan Instagram yang sudah masuk ke scoring.</p></div></div>
+        <div class="table-panel">
+          <div class="table-scroll"><table><thead><tr>
+            <th>Captured</th><th>Platform</th><th>Trend</th><th>Views</th><th>Engagement</th><th>Shares</th><th>Creators</th><th>Evidence</th>
+          </tr></thead><tbody id="socialSignalsBody"></tbody></table></div>
+          <div id="socialEmpty" class="empty-state hidden">Belum ada TikTok atau Instagram signal.</div>
+        </div>
+      </section>
+
+      <section id="sourcesTab" class="tab-panel">
+        <div class="page-heading compact-heading"><div><p class="eyebrow">DATA TRANSPARENCY</p><h1>Source Health</h1>
+          <p class="muted">Setiap angka menampilkan sumber, mode pengambilan, dan waktu data terakhir.</p></div></div>
+        <div id="sourceCards" class="source-grid"></div>
+        <article class="panel source-explanation"><h3>Apa yang benar-benar otomatis?</h3>
+          <div class="explanation-grid">
+            <div><strong>Google Trends RSS</strong><span>Membaca tren pencarian Indonesia dan menyaring topik makanan.</span></div>
+            <div><strong>YouTube Data API</strong><span>Menganalisis video terbaru, views, engagement, creator spread, dan velocity.</span></div>
+            <div><strong>TikTok/Instagram</strong><span>Masuk gratis melalui manual verified input agar tidak mengklaim API yang tidak tersedia.</span></div>
+          </div>
+        </article>
+      </section>
+
+      <section id="methodologyTab" class="tab-panel">
+        <div class="page-heading compact-heading"><div><p class="eyebrow">SCORING LOGIC</p><h1>How the radar works</h1></div></div>
+        <div class="method-grid">
+          <article class="panel"><span class="method-number">01</span><h3>Collect</h3><p>Google Trends dan YouTube berjalan otomatis; TikTok dan Instagram masuk sebagai signal terverifikasi.</p></article>
+          <article class="panel"><span class="method-number">02</span><h3>Filter Food</h3><p>Taksonomi memisahkan dessert, pastry, cake, beverage, snack, main course, dan ingredient.</p></article>
+          <article class="panel"><span class="method-number">03</span><h3>Detect Momentum</h3><p>Sistem membandingkan metric value setiap sumber dengan snapshot 6 jam sampai 7 hari sebelumnya.</p></article>
+          <article class="panel"><span class="method-number">04</span><h3>Score</h3><p>Viral score menggabungkan growth, velocity, reach, engagement termasuk shares, creators, search, dan cross-source.</p></article>
+          <article class="panel"><span class="method-number">05</span><h3>Classify</h3><p>Trend masuk ke Early Signal, Emerging, Growing, Viral, Saturated, Declining, atau Monitor.</p></article>
+          <article class="panel"><span class="method-number">06</span><h3>Show Evidence</h3><p>Setiap trend memiliki link video/artikel, timestamp, data mode, serta histori score.</p></article>
+        </div>
+        <article class="panel formula-panel"><h3>Viral Score 0–100</h3>
+          <div class="formula-row"><span>Growth</span><strong>25</strong></div><div class="formula-row"><span>Views velocity</span><strong>15</strong></div>
+          <div class="formula-row"><span>Total reach</span><strong>15</strong></div><div class="formula-row"><span>Search volume</span><strong>10</strong></div>
+          <div class="formula-row"><span>Engagement + shares</span><strong>15</strong></div><div class="formula-row"><span>Creator diversity</span><strong>10</strong></div>
+          <div class="formula-row"><span>Multi-source confirmation</span><strong>10</strong></div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <div id="drawerBackdrop" class="drawer-backdrop hidden"></div>
+  <aside id="trendDrawer" class="trend-drawer" aria-hidden="true">
+    <button id="closeDrawer" class="icon-button drawer-close" aria-label="Tutup">×</button><div id="trendDetailContent"></div>
+  </aside>
+
+  <dialog id="adminDialog" class="admin-dialog">
+    <form method="dialog" class="dialog-header"><div><p class="eyebrow">ADMIN TOOLS</p><h2>Collector Control</h2></div>
+      <button class="icon-button" value="cancel" aria-label="Tutup">×</button></form>
+    <div class="admin-body">
+      <label><span>Admin token</span><input id="adminTokenInput" type="password" autocomplete="off" placeholder="Token disimpan hanya selama sesi browser"></label>
+      <div class="admin-actions">
+        <button class="button button-primary" data-collect="all" type="button">Collect All</button>
+        <button class="button button-secondary" data-collect="google_trends" type="button">Google Trends</button>
+        <button class="button button-secondary" data-collect="youtube" type="button">YouTube</button>
+      </div><hr>
+      <h3>Add YouTube watchlist query</h3>
+      <div class="inline-form"><input id="watchlistQuery" type="text" placeholder="contoh: mochi croissant">
+        <select id="watchlistCategory"><option>Food</option><option>Dessert</option><option>Pastry</option><option>Cake</option><option>Beverage</option><option>Snack</option><option>Ingredient</option></select>
+        <button id="addWatchlistButton" class="button button-secondary" type="button">Add</button>
+      </div>
+      <p id="adminMessage" class="admin-message"></p>
+    </div>
+  </dialog>
+  <div id="toast" class="toast hidden"></div>
+</body>
+</html>
