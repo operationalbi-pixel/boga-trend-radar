@@ -1,0 +1,13 @@
+{
+  "name": "BOGA Trend Radar",
+  "short_name": "Trend Radar",
+  "description": "Food trend intelligence untuk mendeteksi, menguji, dan memvalidasi peluang produk.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f2f5f4",
+  "theme_color": "#12372f",
+  "icons": [
+    {"src": "./assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}
+  ]
+}

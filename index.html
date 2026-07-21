@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#12372f">
+  <meta name="color-scheme" content="light">
+  <title>BOGA Trend Radar</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./assets/styles.css">
+</head>
+<body>
+  <div id="appShell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <span class="brand-mark">B</span>
+        <div><strong>BOGA</strong><small>Trend Radar</small></div>
+        <button class="icon-button mobile-only" id="closeMenuBtn" aria-label="Tutup menu">×</button>
+      </div>
+      <nav aria-label="Navigasi utama">
+        <button class="nav-item active" data-view="radar"><span>◉</span> Trend Radar</button>
+        <button class="nav-item" data-view="experiments"><span>◇</span> Product Test</button>
+        <button class="nav-item" data-view="sources"><span>⌁</span> Data Sources</button>
+        <button class="nav-item" data-view="settings"><span>⚙</span> Settings</button>
+      </nav>
+      <div class="sidebar-foot">
+        <div><span class="status-dot" id="storageDot"></span><span id="storageLabel">Local mode</span></div>
+        <small>Static WebView · v1.0.0</small>
+      </div>
+    </aside>
+    <div class="scrim" id="scrim"></div>
+
+    <main>
+      <header class="topbar">
+        <div class="top-title">
+          <button class="icon-button mobile-only" id="menuBtn" aria-label="Buka menu">☰</button>
+          <div><h1>Food Trend Intelligence</h1><p>Detect early. Test fast. Launch smarter.</p></div>
+        </div>
+        <div class="top-actions">
+          <button class="secondary desktop-action" id="syncBtn">↻ Sync</button>
+          <button class="primary" id="addTrendBtn">+ Add Trend</button>
+        </div>
+      </header>
+
+      <section id="radarView" class="view active">
+        <div class="kpis" id="kpis"></div>
+        <div class="panel alert-panel" id="alertsPanel">
+          <div class="alert-copy"><span class="alert-symbol">!</span><div><strong>Opportunity alert</strong><p id="alertText">Memuat alert...</p></div></div>
+          <button class="link" id="ackAlertBtn">Tandai dibaca</button>
+        </div>
+
+        <div class="panel chart-panel">
+          <div class="panel-head">
+            <div><h2>Opportunity Map</h2><p>Posisi tren berdasarkan viral potential dan commercial fit.</p></div>
+            <div class="legend"><span><i class="legend-dot fast"></i>Fast Test</span><span><i class="legend-dot monitor"></i>Monitor</span></div>
+          </div>
+          <div class="opportunity-map" id="opportunityMap" aria-label="Peta peluang tren"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head table-head">
+            <div><h2>Trending Now</h2><p>Ranking berdasarkan momentum, engagement, creator, lintas platform, pencarian, dan relevansi Indonesia.</p></div>
+            <div class="filters">
+              <input id="searchInput" placeholder="Cari tren..." autocomplete="off">
+              <select id="categoryFilter"><option value="">Semua kategori</option></select>
+              <select id="actionFilter"><option value="">Semua aksi</option><option>Fast Test</option><option>Differentiate Fast</option><option>Adapt Concept</option><option>Lab Test</option><option>Monitor</option><option>Ignore</option></select>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Trend</th><th>Category</th><th>7D Growth</th><th>Viral</th><th>Commercial Fit</th><th>Saturation</th><th>Action</th><th></th></tr></thead>
+              <tbody id="trendRows"></tbody>
+            </table>
+          </div>
+          <div class="mobile-card-list" id="trendCards"></div>
+        </div>
+      </section>
+
+      <section id="experimentsView" class="view">
+        <div class="section-bar">
+          <div><h2>Product Test Board</h2><p>Idea → review → lab test → outlet test → launch.</p></div>
+          <button class="primary" id="addExperimentBtn">+ New Test</button>
+        </div>
+        <div class="experiment-board" id="experimentBoard"></div>
+      </section>
+
+      <section id="sourcesView" class="view">
+        <div class="section-bar"><div><h2>Data Sources</h2><p>Kelola watchlist, import data, dan sinkronisasi sumber eksternal.</p></div></div>
+        <div class="source-grid">
+          <article class="panel source-card">
+            <span class="source-icon youtube">▶</span><h3>YouTube Collector</h3>
+            <p>Dijalankan melalui Apps Script agar API key tidak tersimpan di repository publik.</p>
+            <button class="primary" id="collectYoutubeBtn">Run Collector</button>
+            <pre id="youtubeResult" class="result-box"></pre>
+          </article>
+          <article class="panel source-card">
+            <span class="source-icon bigquery">BQ</span><h3>BigQuery Sales Sync</h3>
+            <p>Tarik hasil product test dari query agregasi BigQuery melalui Apps Script.</p>
+            <button class="primary" id="syncBigQueryBtn">Sync Sales</button>
+            <pre id="bigQueryResult" class="result-box"></pre>
+          </article>
+          <article class="panel source-card">
+            <span class="source-icon google">G</span><h3>Google Trends CSV</h3>
+            <p>Format: <code>keyword,search_interest,date</code>. Data otomatis menjadi observation.</p>
+            <form id="trendsUpload" class="stack-form">
+              <input type="file" id="trendsFile" accept=".csv,text/csv" required>
+              <select id="importCategory"><option>Dessert</option><option>Pastry</option><option>Beverage</option><option>Savory</option><option>Food</option></select>
+              <button class="primary">Import CSV</button>
+            </form>
+            <pre id="importResult" class="result-box"></pre>
+          </article>
+          <article class="panel source-card">
+            <span class="source-icon hashtag">#</span><h3>Keyword Watchlist</h3>
+            <form id="keywordForm" class="stack-form">
+              <input id="keywordInput" placeholder="Contoh: mochi croissant" required>
+              <input id="keywordCategory" placeholder="Kategori" value="Dessert">
+              <button class="primary">Add Keyword</button>
+            </form>
+            <div id="keywordList" class="keyword-list"></div>
+          </article>
+          <article class="panel source-card">
+            <span class="source-icon manual">＋</span><h3>Manual Evidence</h3>
+            <p>Tambahkan link TikTok, Instagram, kompetitor, artikel, atau catatan lapangan dari detail tren.</p>
+            <button class="secondary" id="openFirstTrendBtn">Open Trend Detail</button>
+          </article>
+        </div>
+      </section>
+
+      <section id="settingsView" class="view">
+        <div class="section-bar"><div><h2>Settings & Backup</h2><p>Konfigurasi storage, data portability, dan reset aplikasi.</p></div></div>
+        <div class="settings-grid">
+          <article class="panel setting-card">
+            <h3>Storage Status</h3>
+            <div class="status-line"><span>Mode</span><strong id="settingsMode">Local</strong></div>
+            <div class="status-line"><span>API endpoint</span><strong id="settingsEndpoint">Not configured</strong></div>
+            <div class="status-line"><span>Last sync</span><strong id="lastSync">Never</strong></div>
+            <div class="button-row"><button class="primary" id="settingsSyncBtn">Pull Cloud</button><button class="secondary" id="pushCloudBtn">Push Current Data</button></div>
+          </article>
+          <article class="panel setting-card">
+            <h3>Backup Data</h3><p>Unduh seluruh trend, observation, experiment, keyword, dan alert dalam satu file JSON.</p>
+            <div class="button-row"><button class="secondary" id="exportJsonBtn">Export JSON</button><button class="secondary" id="exportCsvBtn">Export Trend CSV</button></div>
+          </article>
+          <article class="panel setting-card">
+            <h3>Restore Data</h3><p>Impor backup JSON dari perangkat lain. Data aktif akan diganti.</p>
+            <input type="file" id="backupFile" accept=".json,application/json">
+            <button class="secondary" id="importBackupBtn">Import Backup</button>
+          </article>
+          <article class="panel setting-card danger-card">
+            <h3>Reset Application</h3><p>Hapus data di perangkat dan kembali ke contoh awal.</p>
+            <button class="danger" id="resetBtn">Reset to Seed Data</button>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="trendDialog">
+    <form method="dialog" id="trendForm" class="dialog-form">
+      <div class="dialog-head"><div><h2>Add New Trend</h2><p>Masukkan sinyal awal dan asumsi commercial fit.</p></div><button type="button" class="icon-button close-dialog">×</button></div>
+      <label>Trend name<input name="name" required placeholder="Contoh: Strawberry Pistachio Cup"></label>
+      <div class="two-col"><label>Category<input name="category" value="Dessert"></label><label>Origin country<input name="origin_country" value="Unknown"></label></div>
+      <label>Description<textarea name="description" rows="3" placeholder="Ringkasan tren dan alasan relevan."></textarea></label>
+      <h4>Commercial fit assumptions</h4>
+      <div class="score-grid">
+        <label>Brand fit<input name="brand_fit" type="number" min="0" max="100" value="70"></label>
+        <label>Margin potential<input name="margin_potential" type="number" min="0" max="100" value="70"></label>
+        <label>Production ease<input name="production_ease" type="number" min="0" max="100" value="65"></label>
+        <label>Ingredient availability<input name="ingredient_availability" type="number" min="0" max="100" value="70"></label>
+        <label>Channel fit<input name="channel_fit" type="number" min="0" max="100" value="75"></label>
+        <label>Visual appeal<input name="visual_appeal" type="number" min="0" max="100" value="80"></label>
+        <label>Differentiation<input name="differentiation" type="number" min="0" max="100" value="70"></label>
+        <label>Repeat potential<input name="repeat_potential" type="number" min="0" max="100" value="70"></label>
+      </div>
+      <div class="dialog-actions"><button type="button" class="secondary close-dialog">Cancel</button><button type="submit" value="default" class="primary">Save Trend</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="detailDialog"><div id="detailContent"></div></dialog>
+
+  <dialog id="experimentDialog">
+    <form method="dialog" id="experimentForm" class="dialog-form">
+      <div class="dialog-head"><div><h2>Create Product Test</h2><p>Ubah sinyal tren menjadi eksperimen yang terukur.</p></div><button type="button" class="icon-button close-dialog">×</button></div>
+      <label>Trend<select name="trend_id" id="experimentTrend" required></select></label>
+      <label>Concept name<input name="concept_name" required placeholder="Nama konsep produk Bakerzin"></label>
+      <label>Hypothesis<textarea name="hypothesis" rows="3" placeholder="Hipotesis dampak terhadap trial, sales, atau repeat."></textarea></label>
+      <div class="two-col"><label>Target price<input name="target_price" type="number" min="0"></label><label>Estimated COGS %<input name="estimated_cogs_pct" type="number" min="0" max="100"></label></div>
+      <div class="two-col"><label>Test start<input name="test_start" type="date"></label><label>Test end<input name="test_end" type="date"></label></div>
+      <label>Test outlets<input name="test_outlets" placeholder="BICP, BIPIM, BIKK"></label>
+      <div class="dialog-actions"><button type="button" class="secondary close-dialog">Cancel</button><button type="submit" value="default" class="primary">Create Test</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="./config.js"></script>
+  <script src="./assets/app.js"></script>
+</body>
+</html>

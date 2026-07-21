@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "trends": [
+    {"id":"tr_1","name":"Strawberry Pistachio Cup","category":"Dessert","origin_country":"UAE","description":"Layered strawberry, pistachio cream, chocolate, dan tekstur crunchy.","status":"monitor","owner":"Boga Lab","brand_fit":86,"margin_potential":82,"production_ease":76,"ingredient_availability":74,"channel_fit":88,"visual_appeal":96,"differentiation":78,"repeat_potential":80,"created_at":"2026-07-01T08:00:00.000Z","updated_at":"2026-07-21T08:00:00.000Z"},
+    {"id":"tr_2","name":"Croissant Flan","category":"Pastry","origin_country":"France","description":"Hybrid pastry dengan croissant laminated dan custard flan.","status":"monitor","owner":"Boga Lab","brand_fit":92,"margin_potential":88,"production_ease":68,"ingredient_availability":82,"channel_fit":85,"visual_appeal":90,"differentiation":70,"repeat_potential":76,"created_at":"2026-07-01T08:00:00.000Z","updated_at":"2026-07-21T08:00:00.000Z"},
+    {"id":"tr_3","name":"Matcha Tiramisu","category":"Dessert","origin_country":"Japan / Italy","description":"Tiramisu berprofil matcha dengan visual premium dan rasa familiar.","status":"monitor","owner":"Boga Lab","brand_fit":88,"margin_potential":79,"production_ease":82,"ingredient_availability":90,"channel_fit":88,"visual_appeal":84,"differentiation":72,"repeat_potential":86,"created_at":"2026-07-01T08:00:00.000Z","updated_at":"2026-07-21T08:00:00.000Z"},
+    {"id":"tr_4","name":"Savory Cheesecake","category":"Savory","origin_country":"Global","description":"Cheesecake gurih untuk brunch, sharing, atau snack premium.","status":"monitor","owner":"Boga Lab","brand_fit":60,"margin_potential":74,"production_ease":65,"ingredient_availability":76,"channel_fit":66,"visual_appeal":70,"differentiation":85,"repeat_potential":55,"created_at":"2026-07-01T08:00:00.000Z","updated_at":"2026-07-21T08:00:00.000Z"}
+  ],
+  "observations": [
+    {"id":"ob_1","trend_id":"tr_1","source":"youtube","observed_on":"2026-07-21","views":1850000,"likes":128000,"comments":5400,"post_count":42,"creator_count":31,"search_interest":0,"regional_relevance":86,"source_url":"https://www.youtube.com/","notes":"Aggregate sample"},
+    {"id":"ob_2","trend_id":"tr_1","source":"youtube","observed_on":"2026-07-14","views":1073000,"likes":70400,"comments":3240,"post_count":23,"creator_count":18,"search_interest":0,"regional_relevance":86,"source_url":"","notes":""},
+    {"id":"ob_3","trend_id":"tr_1","source":"tiktok","observed_on":"2026-07-21","views":4600000,"likes":470000,"comments":12300,"post_count":210,"creator_count":145,"search_interest":0,"regional_relevance":92,"source_url":"https://www.tiktok.com/","notes":"Manual TikTok Creative Center observation"},
+    {"id":"ob_4","trend_id":"tr_1","source":"tiktok","observed_on":"2026-07-14","views":2668000,"likes":258500,"comments":7380,"post_count":116,"creator_count":84,"search_interest":0,"regional_relevance":92,"source_url":"","notes":""},
+    {"id":"ob_5","trend_id":"tr_1","source":"google_trends","observed_on":"2026-07-21","views":0,"likes":0,"comments":0,"post_count":0,"creator_count":0,"search_interest":82,"regional_relevance":90,"source_url":"https://trends.google.com/","notes":"Indonesia"},
+    {"id":"ob_6","trend_id":"tr_1","source":"google_trends","observed_on":"2026-07-14","views":0,"likes":0,"comments":0,"post_count":0,"creator_count":0,"search_interest":53,"regional_relevance":90,"source_url":"","notes":""},
+
+    {"id":"ob_7","trend_id":"tr_2","source":"youtube","observed_on":"2026-07-21","views":980000,"likes":54000,"comments":2100,"post_count":28,"creator_count":20,"search_interest":0,"regional_relevance":78,"source_url":"https://www.youtube.com/","notes":""},
+    {"id":"ob_8","trend_id":"tr_2","source":"youtube","observed_on":"2026-07-14","views":568400,"likes":29700,"comments":1260,"post_count":15,"creator_count":12,"search_interest":0,"regional_relevance":78,"source_url":"","notes":""},
+    {"id":"ob_9","trend_id":"tr_2","source":"instagram","observed_on":"2026-07-21","views":1100000,"likes":83000,"comments":3800,"post_count":85,"creator_count":60,"search_interest":0,"regional_relevance":82,"source_url":"https://www.instagram.com/","notes":"Manual observation"},
+    {"id":"ob_10","trend_id":"tr_2","source":"instagram","observed_on":"2026-07-14","views":638000,"likes":45650,"comments":2280,"post_count":47,"creator_count":35,"search_interest":0,"regional_relevance":82,"source_url":"","notes":""},
+    {"id":"ob_11","trend_id":"tr_2","source":"google_trends","observed_on":"2026-07-21","views":0,"likes":0,"comments":0,"post_count":0,"creator_count":0,"search_interest":69,"regional_relevance":85,"source_url":"https://trends.google.com/","notes":""},
+    {"id":"ob_12","trend_id":"tr_2","source":"google_trends","observed_on":"2026-07-14","views":0,"likes":0,"comments":0,"post_count":0,"creator_count":0,"search_interest":45,"regional_relevance":85,"source_url":"","notes":""},
+
+    {"id":"ob_13","trend_id":"tr_3","source":"youtube","observed_on":"2026-07-21","views":610000,"likes":31000,"comments":1400,"post_count":20,"creator_count":17,"search_interest":0,"regional_relevance":76,"source_url":"https://www.youtube.com/","notes":""},
+    {"id":"ob_14","trend_id":"tr_3","source":"youtube","observed_on":"2026-07-14","views":353800,"likes":17050,"comments":840,"post_count":11,"creator_count":10,"search_interest":0,"regional_relevance":76,"source_url":"","notes":""},
+    {"id":"ob_15","trend_id":"tr_3","source":"tiktok","observed_on":"2026-07-21","views":1300000,"likes":126000,"comments":4200,"post_count":96,"creator_count":64,"search_interest":0,"regional_relevance":84,"source_url":"https://www.tiktok.com/","notes":""},
+    {"id":"ob_16","trend_id":"tr_3","source":"tiktok","observed_on":"2026-07-14","views":754000,"likes":69300,"comments":2520,"post_count":53,"creator_count":37,"search_interest":0,"regional_relevance":84,"source_url":"","notes":""},
+    {"id":"ob_17","trend_id":"tr_3","source":"google_trends","observed_on":"2026-07-21","views":0,"likes":0,"comments":0,"post_count":0,"creator_count":0,"search_interest":63,"regional_relevance":88,"source_url":"https://trends.google.com/","notes":""},
+    {"id":"ob_18","trend_id":"tr_3","source":"google_trends","observed_on":"2026-07-14","views":0,"likes":0,"comments":0,"post_count":0,"creator_count":0,"search_interest":41,"regional_relevance":88,"source_url":"","notes":""},
+
+    {"id":"ob_19","trend_id":"tr_4","source":"youtube","observed_on":"2026-07-21","views":120000,"likes":7000,"comments":300,"post_count":12,"creator_count":10,"search_interest":0,"regional_relevance":55,"source_url":"https://www.youtube.com/","notes":""},
+    {"id":"ob_20","trend_id":"tr_4","source":"youtube","observed_on":"2026-07-14","views":69600,"likes":3850,"comments":180,"post_count":7,"creator_count":6,"search_interest":0,"regional_relevance":55,"source_url":"","notes":""},
+    {"id":"ob_21","trend_id":"tr_4","source":"google_trends","observed_on":"2026-07-21","views":0,"likes":0,"comments":0,"post_count":0,"creator_count":0,"search_interest":38,"regional_relevance":60,"source_url":"https://trends.google.com/","notes":""},
+    {"id":"ob_22","trend_id":"tr_4","source":"google_trends","observed_on":"2026-07-14","views":0,"likes":0,"comments":0,"post_count":0,"creator_count":0,"search_interest":25,"regional_relevance":60,"source_url":"","notes":""}
+  ],
+  "experiments": [
+    {"id":"ex_1","trend_id":"tr_1","concept_name":"Bakerzin Strawberry Pistachio Chocolate Parfait","hypothesis":"Produk visual dengan kombinasi strawberry, pistachio, dan chocolate meningkatkan trial serta social sharing.","target_price":89000,"estimated_cogs_pct":31,"test_outlets":"BICP, BIPIM, BIKK","status":"lab_test","test_start":"2026-07-28","test_end":"2026-08-10","decision":"pending","notes":"","sales":[{"id":"sl_1","sales_date":"2026-07-30","outlet":"BICP","product_code":"TEST-SPC","quantity":28,"net_sales":2492000,"transactions":25,"repeat_customers":3}],"created_at":"2026-07-20T08:00:00.000Z","updated_at":"2026-07-21T08:00:00.000Z"}
+  ],
+  "keywords": [
+    {"id":"kw_1","keyword":"dubai chocolate dessert","category":"Dessert","active":true,"auto_create_trend":true},
+    {"id":"kw_2","keyword":"croissant flan","category":"Pastry","active":true,"auto_create_trend":true},
+    {"id":"kw_3","keyword":"matcha dessert","category":"Dessert","active":true,"auto_create_trend":true},
+    {"id":"kw_4","keyword":"pistachio strawberry","category":"Dessert","active":true,"auto_create_trend":true},
+    {"id":"kw_5","keyword":"chewy cookie","category":"Cookie","active":true,"auto_create_trend":true},
+    {"id":"kw_6","keyword":"viral pastry indonesia","category":"Pastry","active":true,"auto_create_trend":true}
+  ],
+  "alerts": [],
+  "meta": {"lastSync":null,"createdAt":"2026-07-21T08:00:00.000Z"}
+}
